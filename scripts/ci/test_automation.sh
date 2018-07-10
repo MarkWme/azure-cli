@@ -6,7 +6,7 @@ set -e
 
 ls -la $share_folder/build
 
-ALL_MODULES=`find $share_folder/build/ -name "*.whl"`
+ALL_MODULES=`find $share_folder/build/ -name "*.whl" | grep -v azure_cli_fulltest`
 
 ##############################################
 # Define colored output func
@@ -17,17 +17,20 @@ function title {
     echo -e ${LGREEN}$1${CLEAR}
 }
 
-title 'Install azdev'
-pip install -qqq -e ./tools
+# title 'Install azdev'
+# pip install -qqq -e ./tools
 
-title 'Install code coverage tools'
-pip install -qqq coverage codecov
+# title 'Install code coverage tools'
+# pip install -qqq coverage codecov
 
 title 'Install private packages (optional)'
 [ -d privates ] && pip install -qqq privates/*.whl
 
 title 'Install products'
 pip install -qqq $ALL_MODULES
+
+title 'Install pytest'
+pip install -qqq pytest pytest-xdist
 
 title 'Installed packages'
 pip freeze
@@ -39,4 +42,10 @@ if [ "$target_profile" != "latest" ]; then
 fi
 
 title 'Running tests'
-python -m automation test --ci --profile $target_profile
+PYTHON_DIR=`cd $(dirname $(which python)); cd ..; pwd`
+SITE_PACKAGES_DIR=`find $PYTHON_DIR -name site-packages`
+
+pytest -n 8 $SITE_PACKAGES_DIR/azure/cli/core/tests
+find $SITE_PACKAGES_DIR/azure/cli/command_modules -type d | grep -e 'tests/latest$' | xargs pytest -n 8 
+
+

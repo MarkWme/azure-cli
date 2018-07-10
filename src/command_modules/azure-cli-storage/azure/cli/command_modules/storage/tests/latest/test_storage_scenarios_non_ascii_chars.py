@@ -6,7 +6,7 @@
 
 import os
 from azure.cli.testsdk import LiveScenarioTest, ResourceGroupPreparer, StorageAccountPreparer, JMESPathCheck
-from .storage_test_util import StorageScenarioMixin
+from azure.cli.command_modules.storage.tests.latest.storage_test_util import StorageScenarioMixin
 
 
 class StorageCopyTests(StorageScenarioMixin, LiveScenarioTest):
