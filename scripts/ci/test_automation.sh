@@ -6,7 +6,7 @@ set -e
 
 ls -la $share_folder/build
 
-ALL_MODULES=`find $share_folder/build/ -name "*.whl" | grep -v azure_cli_fulltest`
+ALL_MODULES=`find $share_folder/build/ -name "*.whl"`
 
 ##############################################
 # Define colored output func
